@@ -47,8 +47,10 @@ jobs:
                           sa_info, scopes=["https://www.googleapis.com/auth/drive.readonly"])
               drive = build("drive", "v3", credentials=creds, cache_discovery=False)
 
-              # Search both the root and Got Sync subfolder
-              for FOLDER_ID in ["1mjjTFVzstPqCY3iugTiZ2-QpBqpN0DUz", "1k6fFcBwtEanwmxpEZ7FfwXwZMCvBPDwF"]:
+              # Search all known folder locations
+              for FOLDER_ID in ["1toz5ZW8_gpXyfmDRP0agLFw-adj0CJH2",
+                                 "1mjjTFVzstPqCY3iugTiZ2-QpBqpN0DUz",
+                                 "1k6fFcBwtEanwmxpEZ7FfwXwZMCvBPDwF"]:
                   results = drive.files().list(
                       q=f"'{FOLDER_ID}' in parents and name contains 'HealthMetrics' and trashed=false",
                       fields="files(id, name)",
