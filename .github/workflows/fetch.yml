@@ -1,0 +1,87 @@
+name: Fetch Fitness Data
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # every hour; GitHub Actions UTC — 01:30 UTC = 07:00 IST
+  workflow_dispatch:        # manual trigger from GitHub UI
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests google-api-python-client google-auth
+
+      - name: Download Apple Health CSVs from Google Drive
+        env:
+          GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          mkdir -p apple_health
+          python - <<'PYEOF'
+          import json, os, sys
+          from pathlib import Path
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+          from googleapiclient.http import MediaIoBaseDownload
+          import io
+
+          sa_info = json.loads(os.environ["GDRIVE_SERVICE_ACCOUNT_JSON"])
+          creds   = service_account.Credentials.from_service_account_info(
+                      sa_info, scopes=["https://www.googleapis.com/auth/drive.readonly"])
+          drive   = build("drive", "v3", credentials=creds, cache_discovery=False)
+
+          # Folder ID for "Got Sync" subfolder
+          FOLDER_ID = "1k6fFcBwtEanwmxpEZ7FfwXwZMCvBPDwF"
+
+          results = drive.files().list(
+              q=f"'{FOLDER_ID}' in parents and name contains 'HealthMetrics' and trashed=false",
+              fields="files(id, name)",
+              orderBy="name desc",
+              pageSize=3          # only need today + yesterday
+          ).execute()
+
+          files = results.get("files", [])
+          if not files:
+              print("No HealthMetrics CSV files found in Google Drive folder.")
+              sys.exit(0)
+
+          for f in files:
+              dest = Path("apple_health") / f["name"]
+              if dest.exists():
+                  print(f"Already have {f['name']} — skipping")
+                  continue
+              print(f"Downloading {f['name']}...")
+              req    = drive.files().get_media(fileId=f["id"])
+              buf    = io.BytesIO()
+              dl     = MediaIoBaseDownload(buf, req)
+              done   = False
+              while not done:
+                  _, done = dl.next_chunk()
+              dest.write_bytes(buf.getvalue())
+              print(f"  Saved to {dest}")
+          PYEOF
+
+      - name: Run fetch script
+        env:
+          OURA_TOKEN: ${{ secrets.OURA_TOKEN }}
+          APPLE_HEALTH_CSV_DIR: ${{ github.workspace }}/apple_health
+        run: python fetch_latest.py
+
+      - name: Commit latest_metrics.json
+        run: |
+          git config user.name  "fitness-sync-bot"
+          git config user.email "bot@fitness-sync"
+          git add latest_metrics.json
+          git diff --cached --quiet || git commit -m "chore: update metrics $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push
