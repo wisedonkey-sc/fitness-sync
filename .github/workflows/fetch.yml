@@ -90,6 +90,16 @@ jobs:
               sys.exit(0)
           PYEOF
 
+
+      - name: Debug - list downloaded files
+        run: |
+          echo "=== apple_health/ contents ==="
+          ls -la apple_health/ 2>/dev/null || echo "Directory empty or missing"
+          echo "=== First 3 lines of today file ==="
+          head -3 "apple_health/HealthMetrics-2026-06-14.csv" 2>/dev/null || echo "File not found"
+          echo "=== File size ==="
+          wc -c "apple_health/HealthMetrics-2026-06-14.csv" 2>/dev/null || echo "N/A"
+
       - name: Run fetch script
         env:
           OURA_TOKEN: ${{ secrets.OURA_TOKEN }}
