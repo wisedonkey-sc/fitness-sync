@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-14T12:29:07.515255",
+  "generated_at": "2026-06-14T13:34:23.092619",
   "date": "2026-06-14",
   "oura": {
     "today": {
@@ -14,8 +14,8 @@
       "sleep_hrv_rmssd": 45.0,
       "sleep_lowest_hr": 50,
       "sleep_efficiency": 79.0,
-      "steps": 1412,
-      "active_calories": 76,
+      "steps": 1753,
+      "active_calories": 93,
       "spo2_avg": null
     },
     "yesterday": {
@@ -36,8 +36,54 @@
     }
   },
   "apple_health": {
-    "today": {},
-    "yesterday": {}
+    "today": {
+      "steps": 1428.6,
+      "rhr": 51.0,
+      "hrv_sdnn": 51.7,
+      "spo2": 96.5,
+      "resp_rate": 13.9,
+      "active_energy": 180.6,
+      "vo2max": null,
+      "weight_lb": null,
+      "body_fat_pct": null,
+      "wrist_temp": null,
+      "workout_avg_hr": 54.5,
+      "workout_max_hr": 55.4,
+      "running_power": null,
+      "gct_ms": null,
+      "stride_m": null,
+      "vert_osc_cm": null,
+      "sleep_total_hr": 9.91,
+      "sleep_deep_hr": 1.63,
+      "sleep_rem_hr": 1.78,
+      "sleep_core_hr": 6.49,
+      "sleep_awake_hr": 2.58,
+      "workout_dist_km": 0.97
+    },
+    "yesterday": {
+      "steps": 17018.6,
+      "rhr": 50.5,
+      "hrv_sdnn": 55.1,
+      "spo2": 97.0,
+      "resp_rate": 13.7,
+      "active_energy": 897.5,
+      "vo2max": 47.0,
+      "weight_lb": null,
+      "body_fat_pct": null,
+      "wrist_temp": null,
+      "workout_avg_hr": 63.5,
+      "workout_max_hr": 65.0,
+      "running_power": 159.2,
+      "gct_ms": null,
+      "stride_m": 0.9,
+      "vert_osc_cm": null,
+      "sleep_total_hr": 7.71,
+      "sleep_deep_hr": 1.22,
+      "sleep_rem_hr": 2.12,
+      "sleep_core_hr": 4.38,
+      "sleep_awake_hr": 0.08,
+      "workout_dist_km": 16.74
+    }
   },
   "errors": []
 }
