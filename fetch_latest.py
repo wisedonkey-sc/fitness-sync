@@ -156,10 +156,8 @@ def fetch_apple_health(export_path: str) -> dict:
         accum = {}
         try:
             with open(path, encoding="utf-8-sig", newline="") as f:
-                content = f.read().replace("
-", "
-").replace("", "
-")
+                content = f.read()
+            reader = csv.reader(content.splitlines())
             reader = csv.reader(content.splitlines())
             headers = [h.strip() for h in next(reader)]
 
