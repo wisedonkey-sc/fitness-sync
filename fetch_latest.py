@@ -120,78 +120,76 @@ def fetch_oura(token: str) -> dict:
 # ── Apple Health (CSV from Health Auto Export — wide format) ──────────────────
 def fetch_apple_health(export_path: str) -> dict:
     import csv
-    from statistics import mean as smean
+    from pathlib import Path
 
-    # Column name substrings mapped to internal keys
-    # Format: (internal_key, aggregation, unit_note)
     COLUMN_MAP = {
-        "Step Count":                          ("steps",          "sum"),
-        "Resting Heart Rate":                  ("rhr",            "mean"),
-        "Heart Rate Variability":              ("hrv_sdnn",       "mean"),
-        "Blood Oxygen Saturation":             ("spo2",           "mean"),
-        "Respiratory Rate":                    ("resp_rate",       "mean"),
-        "Active Energy":                       ("active_energy",  "sum"),
-        "VO2 Max":                             ("vo2max",         "mean"),
-        "Weight":                              ("weight_lb",      "last"),
-        "Body Fat Percentage":                 ("body_fat_pct",   "last"),
-        "Apple Sleeping Wrist Temperature":    ("wrist_temp",     "mean"),
-        "Heart Rate [Avg]":                    ("workout_avg_hr", "mean"),
-        "Heart Rate [Max]":                    ("workout_max_hr", "mean"),
-        "Walking + Running Distance":          ("workout_dist_km","sum"),  # miles, convert later
-        "Running Power":                       ("running_power",  "mean"),
-        "Running Ground Contact Time":         ("gct_ms",         "mean"),
-        "Running Stride Length":               ("stride_m",       "mean"),
-        "Running Vertical Oscillation":        ("vert_osc_cm",    "mean"),
-        "Walking Speed":                       ("walk_speed",     "mean"),
-        "Walking Heart Rate Average":          ("walk_hr",        "mean"),
-        "Sleep Analysis [Total]":              ("sleep_total_hr", "max"),
-        "Sleep Analysis [Deep]":               ("sleep_deep_hr",  "max"),
-        "Sleep Analysis [REM]":                ("sleep_rem_hr",   "max"),
-        "Sleep Analysis [Core]":               ("sleep_core_hr",  "max"),
-        "Sleep Analysis [Awake]":              ("sleep_awake_hr", "max"),
+        "Step Count":                        ("steps",           "sum"),
+        "Resting Heart Rate":                ("rhr",             "mean"),
+        "Heart Rate Variability":            ("hrv_sdnn",        "mean"),
+        "Blood Oxygen Saturation":           ("spo2",            "mean"),
+        "Respiratory Rate":                  ("resp_rate",       "mean"),
+        "Active Energy":                     ("active_energy",   "sum"),
+        "VO2 Max":                           ("vo2max",          "mean"),
+        "Weight":                            ("weight_lb",       "last"),
+        "Body Fat Percentage":               ("body_fat_pct",    "last"),
+        "Apple Sleeping Wrist Temperature":  ("wrist_temp",      "mean"),
+        "Heart Rate [Avg]":                  ("workout_avg_hr",  "mean"),
+        "Heart Rate [Max]":                  ("workout_max_hr",  "mean"),
+        "Walking + Running Distance":        ("workout_dist_mi", "sum"),
+        "Running Power":                     ("running_power",   "mean"),
+        "Running Ground Contact Time":       ("gct_ms",          "mean"),
+        "Running Stride Length":             ("stride_m",        "mean"),
+        "Running Vertical Oscillation":      ("vert_osc_cm",     "mean"),
+        "Sleep Analysis [Total]":            ("sleep_total_hr",  "max"),
+        "Sleep Analysis [Deep]":             ("sleep_deep_hr",   "max"),
+        "Sleep Analysis [REM]":              ("sleep_rem_hr",    "max"),
+        "Sleep Analysis [Core]":             ("sleep_core_hr",   "max"),
+        "Sleep Analysis [Awake]":            ("sleep_awake_hr",  "max"),
     }
 
     def read_day(d) -> dict:
-        from pathlib import Path
         path = Path(export_path) / f"HealthMetrics-{d.isoformat()}.csv"
         if not path.exists():
-            print(f"  Apple Health: no file for {d}")
+            print(f"  Apple Health: no file for {d} at {path}")
             return {}
 
-        accum = {}   # key -> list of floats
-
+        accum = {}
         try:
-            with open(path, encoding="utf-8", newline="") as f:
-                reader = csv.reader(f)
-                headers = next(reader)
+            with open(path, encoding="utf-8-sig", newline="") as f:
+                content = f.read().replace("
+", "
+").replace("", "
+")
+            reader = csv.reader(content.splitlines())
+            headers = [h.strip() for h in next(reader)]
 
-                # Map column index -> (internal_key, agg)
-                col_map = {}
-                for col_substr, (ikey, agg) in COLUMN_MAP.items():
-                    for i, h in enumerate(headers):
-                        if col_substr.lower() in h.lower():
-                            col_map[i] = (ikey, agg)
-                            break
+            col_map = {}
+            for substr, (ikey, agg) in COLUMN_MAP.items():
+                for i, h in enumerate(headers):
+                    if substr.lower() in h.lower():
+                        col_map[i] = (ikey, agg)
+                        break
 
-                for row in reader:
-                    for idx, (ikey, agg) in col_map.items():
-                        if idx >= len(row):
-                            continue
-                        val = row[idx].strip()
-                        if not val:
-                            continue
-                        try:
-                            fval = float(val)
-                            accum.setdefault(ikey, []).append(fval)
-                        except ValueError:
-                            pass
+            print(f"  Matched {len(col_map)} columns for {d}")
+
+            for row in reader:
+                for idx, (ikey, agg) in col_map.items():
+                    if idx >= len(row):
+                        continue
+                    val = row[idx].strip()
+                    if not val:
+                        continue
+                    try:
+                        accum.setdefault(ikey, []).append(float(val))
+                    except ValueError:
+                        pass
 
         except Exception as e:
             print(f"  Apple Health warning ({d}): {e}")
             return {}
 
         result = {}
-        for col_substr, (ikey, agg) in COLUMN_MAP.items():
+        for substr, (ikey, agg) in COLUMN_MAP.items():
             vals = accum.get(ikey, [])
             if not vals:
                 result[ikey] = None
@@ -199,15 +197,16 @@ def fetch_apple_health(export_path: str) -> dict:
             if agg == "sum":
                 result[ikey] = round(sum(vals), 1)
             elif agg == "mean":
-                result[ikey] = round(smean(vals), 1)
+                result[ikey] = round(sum(vals) / len(vals), 1)
             elif agg == "last":
                 result[ikey] = round(vals[-1], 1)
             elif agg == "max":
                 result[ikey] = round(max(vals), 2)
 
-        # Convert walking+running distance from miles to km
-        if result.get("workout_dist_km") is not None:
-            result["workout_dist_km"] = round(result["workout_dist_km"] * 1.60934, 2)
+        # Convert distance miles -> km
+        if result.get("workout_dist_mi") is not None:
+            result["workout_dist_km"] = round(result["workout_dist_mi"] * 1.60934, 2)
+        result.pop("workout_dist_mi", None)
 
         return result
 
