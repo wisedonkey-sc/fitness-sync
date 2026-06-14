@@ -24,6 +24,7 @@ jobs:
         run: pip install requests google-api-python-client google-auth
 
       - name: Download Apple Health CSVs from Google Drive
+        continue-on-error: true
         env:
           GDRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}
         run: |
@@ -36,40 +37,47 @@ jobs:
           from googleapiclient.http import MediaIoBaseDownload
           import io
 
-          sa_info = json.loads(os.environ["GDRIVE_SERVICE_ACCOUNT_JSON"])
-          creds   = service_account.Credentials.from_service_account_info(
-                      sa_info, scopes=["https://www.googleapis.com/auth/drive.readonly"])
-          drive   = build("drive", "v3", credentials=creds, cache_discovery=False)
+          try:
+              sa_info = json.loads(os.environ.get("GDRIVE_SERVICE_ACCOUNT_JSON", "{}"))
+              if not sa_info:
+                  print("GDRIVE_SERVICE_ACCOUNT_JSON not set — skipping Apple Health download")
+                  sys.exit(0)
 
-          # Folder ID for "Got Sync" subfolder
-          FOLDER_ID = "1k6fFcBwtEanwmxpEZ7FfwXwZMCvBPDwF"
+              creds = service_account.Credentials.from_service_account_info(
+                          sa_info, scopes=["https://www.googleapis.com/auth/drive.readonly"])
+              drive = build("drive", "v3", credentials=creds, cache_discovery=False)
 
-          results = drive.files().list(
-              q=f"'{FOLDER_ID}' in parents and name contains 'HealthMetrics' and trashed=false",
-              fields="files(id, name)",
-              orderBy="name desc",
-              pageSize=3          # only need today + yesterday
-          ).execute()
-
-          files = results.get("files", [])
-          if not files:
-              print("No HealthMetrics CSV files found in Google Drive folder.")
+              # Search both the root and Got Sync subfolder
+              for FOLDER_ID in ["1mjjTFVzstPqCY3iugTiZ2-QpBqpN0DUz", "1k6fFcBwtEanwmxpEZ7FfwXwZMCvBPDwF"]:
+                  results = drive.files().list(
+                      q=f"'{FOLDER_ID}' in parents and name contains 'HealthMetrics' and trashed=false",
+                      fields="files(id, name)",
+                      orderBy="name desc",
+                      pageSize=3
+                  ).execute()
+                  files = results.get("files", [])
+                  if files:
+                      print(f"Found {len(files)} file(s) in folder {FOLDER_ID}")
+                      for f in files:
+                          dest = Path("apple_health") / f["name"]
+                          if dest.exists():
+                              print(f"  Already have {f['name']} — skipping")
+                              continue
+                          print(f"  Downloading {f['name']}...")
+                          req = drive.files().get_media(fileId=f["id"])
+                          buf = io.BytesIO()
+                          dl  = MediaIoBaseDownload(buf, req)
+                          done = False
+                          while not done:
+                              _, done = dl.next_chunk()
+                          dest.write_bytes(buf.getvalue())
+                          print(f"  Saved to {dest}")
+                  else:
+                      print(f"No HealthMetrics CSVs found in folder {FOLDER_ID} yet")
+          except Exception as e:
+              print(f"Google Drive step warning: {e}")
+              print("Continuing without Apple Health data — Oura will still run")
               sys.exit(0)
-
-          for f in files:
-              dest = Path("apple_health") / f["name"]
-              if dest.exists():
-                  print(f"Already have {f['name']} — skipping")
-                  continue
-              print(f"Downloading {f['name']}...")
-              req    = drive.files().get_media(fileId=f["id"])
-              buf    = io.BytesIO()
-              dl     = MediaIoBaseDownload(buf, req)
-              done   = False
-              while not done:
-                  _, done = dl.next_chunk()
-              dest.write_bytes(buf.getvalue())
-              print(f"  Saved to {dest}")
           PYEOF
 
       - name: Run fetch script
