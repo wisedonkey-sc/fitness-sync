@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-06-14T11:43:07.276176",
+  "date": "2026-06-14",
+  "oura": {
+    "today": {
+      "readiness_score": 71,
+      "readiness_hrv_balance": 86,
+      "readiness_temp_contrib": 100,
+      "sleep_score": 72,
+      "sleep_total_hr": 6.28,
+      "sleep_deep_hr": 0.88,
+      "sleep_rem_hr": 1.12,
+      "sleep_light_hr": 4.28,
+      "sleep_hrv_rmssd": 45.0,
+      "sleep_lowest_hr": 50,
+      "sleep_efficiency": 79.0,
+      "steps": 1399,
+      "active_calories": 76,
+      "spo2_avg": null
+    },
+    "yesterday": {
+      "readiness_score": 82,
+      "readiness_hrv_balance": 89,
+      "readiness_temp_contrib": 88,
+      "sleep_score": 77,
+      "sleep_total_hr": null,
+      "sleep_deep_hr": null,
+      "sleep_rem_hr": null,
+      "sleep_light_hr": null,
+      "sleep_hrv_rmssd": null,
+      "sleep_lowest_hr": null,
+      "sleep_efficiency": null,
+      "steps": null,
+      "active_calories": null,
+      "spo2_avg": null
+    }
+  },
+  "apple_health": {
+    "today": {},
+    "yesterday": {}
+  },
+  "errors": []
+}
