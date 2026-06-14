@@ -117,69 +117,98 @@ def fetch_oura(token: str) -> dict:
     return {"today": day_data(TODAY), "yesterday": day_data(YESTERDAY)}
 
 
-# ── Apple Health (CSV from Health Auto Export) ────────────────────────────────
+# ── Apple Health (CSV from Health Auto Export — wide format) ──────────────────
 def fetch_apple_health(export_path: str) -> dict:
     import csv
+    from statistics import mean as smean
 
-    def read_day(d: date) -> dict:
+    # Column name substrings mapped to internal keys
+    # Format: (internal_key, aggregation, unit_note)
+    COLUMN_MAP = {
+        "Step Count":                          ("steps",          "sum"),
+        "Resting Heart Rate":                  ("rhr",            "mean"),
+        "Heart Rate Variability":              ("hrv_sdnn",       "mean"),
+        "Blood Oxygen Saturation":             ("spo2",           "mean"),
+        "Respiratory Rate":                    ("resp_rate",       "mean"),
+        "Active Energy":                       ("active_energy",  "sum"),
+        "VO2 Max":                             ("vo2max",         "mean"),
+        "Weight":                              ("weight_lb",      "last"),
+        "Body Fat Percentage":                 ("body_fat_pct",   "last"),
+        "Apple Sleeping Wrist Temperature":    ("wrist_temp",     "mean"),
+        "Heart Rate [Avg]":                    ("workout_avg_hr", "mean"),
+        "Heart Rate [Max]":                    ("workout_max_hr", "mean"),
+        "Walking + Running Distance":          ("workout_dist_km","sum"),  # miles, convert later
+        "Running Power":                       ("running_power",  "mean"),
+        "Running Ground Contact Time":         ("gct_ms",         "mean"),
+        "Running Stride Length":               ("stride_m",       "mean"),
+        "Running Vertical Oscillation":        ("vert_osc_cm",    "mean"),
+        "Walking Speed":                       ("walk_speed",     "mean"),
+        "Walking Heart Rate Average":          ("walk_hr",        "mean"),
+        "Sleep Analysis [Total]":              ("sleep_total_hr", "max"),
+        "Sleep Analysis [Deep]":               ("sleep_deep_hr",  "max"),
+        "Sleep Analysis [REM]":                ("sleep_rem_hr",   "max"),
+        "Sleep Analysis [Core]":               ("sleep_core_hr",  "max"),
+        "Sleep Analysis [Awake]":              ("sleep_awake_hr", "max"),
+    }
+
+    def read_day(d) -> dict:
+        from pathlib import Path
         path = Path(export_path) / f"HealthMetrics-{d.isoformat()}.csv"
         if not path.exists():
-            print(f"  Apple Health: no file for {d} at {path}")
+            print(f"  Apple Health: no file for {d}")
             return {}
 
-        metrics = {
-            "steps":         "Step Count",
-            "rhr":           "Resting Heart Rate",
-            "hrv_sdnn":      "Heart Rate Variability",
-            "spo2":          "Blood Oxygen Saturation",
-            "resp_rate":     "Respiratory Rate",
-            "active_energy": "Active Energy",
-            "vo2max":        "VO2 Max",
-            "weight_lb":     "Weight",
-            "body_fat_pct":  "Body Fat Percentage",
-            "wrist_temp":    "Apple Sleeping Wrist Temperature",
-            # Garmin-synced workout fields (present if Garmin→AH sync is on)
-            "workout_avg_hr":   "Workout Average Heart Rate",
-            "workout_max_hr":   "Workout Max Heart Rate",
-            "workout_dist_km":  "Workout Distance",
-            "workout_duration": "Workout Duration",
-            "workout_calories": "Workout Active Energy",
-        }
-
-        sums  = {"steps": 0, "active_energy": 0, "workout_dist_km": 0,
-                  "workout_duration": 0, "workout_calories": 0}
-        means = {k: [] for k in ["rhr", "hrv_sdnn", "spo2", "resp_rate",
-                                  "vo2max", "workout_avg_hr", "workout_max_hr"]}
-        lasts = {k: None for k in ["weight_lb", "body_fat_pct", "wrist_temp"]}
+        accum = {}   # key -> list of floats
 
         try:
             with open(path, encoding="utf-8", newline="") as f:
-                reader  = csv.reader(f)
+                reader = csv.reader(f)
                 headers = next(reader)
-                col = {}
-                for key, substr in metrics.items():
+
+                # Map column index -> (internal_key, agg)
+                col_map = {}
+                for col_substr, (ikey, agg) in COLUMN_MAP.items():
                     for i, h in enumerate(headers):
-                        if substr.lower() in h.lower():
-                            col[key] = i
+                        if col_substr.lower() in h.lower():
+                            col_map[i] = (ikey, agg)
                             break
+
                 for row in reader:
-                    for key, idx in col.items():
-                        if idx >= len(row): continue
-                        try:    v = float(row[idx])
-                        except: continue
-                        if key in sums:   sums[key]  += v
-                        elif key in means: means[key].append(v)
-                        elif key in lasts: lasts[key] = v
+                    for idx, (ikey, agg) in col_map.items():
+                        if idx >= len(row):
+                            continue
+                        val = row[idx].strip()
+                        if not val:
+                            continue
+                        try:
+                            fval = float(val)
+                            accum.setdefault(ikey, []).append(fval)
+                        except ValueError:
+                            pass
+
         except Exception as e:
             print(f"  Apple Health warning ({d}): {e}")
             return {}
 
         result = {}
-        for k, v in sums.items():
-            result[k] = round(v, 1) if v else None
-        for k, vals in means.items():
-            result[k] = round(sum(vals) / len(vals), 1) if vals else None
-        result.update(lasts)
+        for col_substr, (ikey, agg) in COLUMN_MAP.items():
+            vals = accum.get(ikey, [])
+            if not vals:
+                result[ikey] = None
+                continue
+            if agg == "sum":
+                result[ikey] = round(sum(vals), 1)
+            elif agg == "mean":
+                result[ikey] = round(smean(vals), 1)
+            elif agg == "last":
+                result[ikey] = round(vals[-1], 1)
+            elif agg == "max":
+                result[ikey] = round(max(vals), 2)
+
+        # Convert walking+running distance from miles to km
+        if result.get("workout_dist_km") is not None:
+            result["workout_dist_km"] = round(result["workout_dist_km"] * 1.60934, 2)
+
         return result
 
     return {"today": read_day(TODAY), "yesterday": read_day(YESTERDAY)}
@@ -253,4 +282,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
