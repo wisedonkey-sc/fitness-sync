@@ -53,7 +53,7 @@ jobs:
                                  "1k6fFcBwtEanwmxpEZ7FfwXwZMCvBPDwF"]:
                   results = drive.files().list(
                       q=f"'{FOLDER_ID}' in parents and name contains 'HealthMetrics' and trashed=false",
-                      fields="files(id, name)",
+                      fields="files(id, name, mimeType)",
                       orderBy="name desc",
                       pageSize=3
                   ).execute()
@@ -61,12 +61,20 @@ jobs:
                   if files:
                       print(f"Found {len(files)} file(s) in folder {FOLDER_ID}")
                       for f in files:
-                          dest = Path("apple_health") / f["name"]
+                          name = f["name"]
+                          if not name.endswith(".csv"):
+                              name = name + ".csv"
+                          dest = Path("apple_health") / name
                           if dest.exists():
-                              print(f"  Already have {f['name']} — skipping")
+                              print(f"  Already have {name} — skipping")
                               continue
-                          print(f"  Downloading {f['name']}...")
-                          req = drive.files().get_media(fileId=f["id"])
+                          mime = f.get("mimeType", "")
+                          print(f"  Downloading {f['name']} (mime: {mime})...")
+                          if "spreadsheet" in mime or "google-apps" in mime:
+                              req = drive.files().export_media(
+                                  fileId=f["id"], mimeType="text/csv")
+                          else:
+                              req = drive.files().get_media(fileId=f["id"])
                           buf = io.BytesIO()
                           dl  = MediaIoBaseDownload(buf, req)
                           done = False
