@@ -2,15 +2,10 @@ name: Fetch Fitness Data
 
 on:
   schedule:
-    - cron: "30 0 * * *"   # 06:00 IST (UTC+5:30) — morning report
-    - cron: "30 13 * * *"  # 19:00 IST (UTC+5:30) — evening report
-    - cron: "0 * * * *"    # hourly data refresh (no report)
-  workflow_dispatch:
-    inputs:
-      report_type:
-        description: "Report to generate: morning, evening, or none"
-        required: false
-        default: "none"
+    - cron: "30 0 * * *"   # 06:00 IST — morning
+    - cron: "30 13 * * *"  # 19:00 IST — evening
+    - cron: "0 * * * *"    # hourly data refresh
+  workflow_dispatch: {}
 
 jobs:
   fetch:
@@ -98,174 +93,10 @@ jobs:
           APPLE_HEALTH_CSV_DIR: ${{ github.workspace }}/apple_health
         run: python fetch_latest.py
 
-      - name: Determine report type
-        id: report_type
-        run: |
-          # Check manual override first
-          MANUAL="${{ github.event.inputs.report_type }}"
-          if [ "$MANUAL" = "morning" ] || [ "$MANUAL" = "evening" ]; then
-            echo "type=$MANUAL" >> $GITHUB_OUTPUT
-            echo "Report type (manual): $MANUAL"
-            exit 0
-          fi
-          # Infer from UTC hour (cron schedule)
-          HOUR=$(date -u +%H)
-          MINUTE=$(date -u +%M)
-          echo "UTC time: $HOUR:$MINUTE"
-          if [ "$HOUR" = "00" ]; then
-            echo "type=morning" >> $GITHUB_OUTPUT
-            echo "Report type: morning"
-          elif [ "$HOUR" = "13" ]; then
-            echo "type=evening" >> $GITHUB_OUTPUT
-            echo "Report type: evening"
-          else
-            echo "type=none" >> $GITHUB_OUTPUT
-            echo "Report type: none (data refresh only)"
-          fi
-
-      - name: Generate report
-        if: steps.report_type.outputs.type != 'none'
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          REPORT_TYPE: ${{ steps.report_type.outputs.type }}
-        run: |
-          python - <<'PYEOF'
-          import json, os, sys, requests
-          from datetime import date
-
-          report_type = os.environ.get("REPORT_TYPE", "none")
-          api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-
-          if not api_key:
-              print("No ANTHROPIC_API_KEY — skipping report generation")
-              sys.exit(0)
-
-          with open("latest_metrics.json") as f:
-              metrics = json.load(f)
-
-          if report_type == "morning":
-              prompt = f"""You are generating a morning health report for Sudeep Charles.
-
-CARDIAC CONTEXT (non-negotiable constraints):
-- Bicuspid Aortic Valve + Mild Aortic Stenosis
-- Ascending Aortic Aneurysm 4.7cm (threshold 5.0-5.5cm)
-- Mild Concentric LV Hypertrophy (LVPW-d 1.70cm May 2026)
-- Meds: Metoprolol Succinate 50mg BD — blunts HR by ~12 bpm. Always adjust HR +12 for true stress analysis.
-- Hard limits: No HIIT, No Zone 4+, No heavy isometrics, No back-to-back runs
-
-BASELINES:
-- HRV rMSSD: 100-110ms (Oura overnight)
-- HRV SDNN: 50-60ms (Apple Health / Bevel)
-- RHR: high 40s-low 50s bpm
-- VO2max: 48 ml/kg/min
-- Z2 target: 132-141 bpm (pace 6:15-6:35/km)
-- EF target: 2.04
-
-GO/NO-GO THRESHOLDS:
-- Run if Readiness >= 75 AND body_temp contributor >= 85
-- Walk if 60-74
-- Full rest if < 60
-- HRV rMSSD >= 100ms to run (rest if < 80ms)
-- RHR <= 54 bpm to run (rest if > 62)
-- AvgHR <= 140 during run (slow if > 143)
-
-TODAY'S DATA:
-{json.dumps(metrics, indent=2)}
-
-Generate the morning report in EXACTLY this format:
-
-1. THE DAILY FOUR-METRIC DASHBOARD
-A clean table: Sleep Score | Readiness | HRV rMSSD | HRV SDNN
-
-2. PERFORMANCE ANALYSIS
-- Compare every metric against baseline (express as % above/below)
-- Apply +12 bpm Metoprolol correction to all HR values before stress interpretation
-- Zone and strain guidance for today based on readiness
-
-3. THE SO WHAT
-- Causation/correlations (e.g. late dinner -> elevated RHR -> poor sleep)
-- One specific experiment to run
-- Cardiac guardrails: flag any HRV suppression > 1.5 SD or temp deviation
-
-CONSTRAINTS: No emojis. No corporate pleasantries. Direct, factual, data-anchored."""
-
-          else:  # evening
-              prompt = f"""You are generating an evening health report for Sudeep Charles.
-
-CARDIAC CONTEXT:
-- Bicuspid Aortic Valve + Mild Aortic Stenosis
-- Ascending Aortic Aneurysm 4.7cm
-- Metoprolol Succinate 50mg BD — adjust HR +12 bpm for true stress
-- Hard limits: No HIIT, No Zone 4+, No heavy isometrics
-
-BASELINES:
-- HRV rMSSD: 100-110ms | HRV SDNN: 50-60ms | RHR: high 40s-low 50s
-- Weekly structure: Sunday long run, Tuesday moderate, Friday stout
-- Step floor: 7,400/day | Target bedtime: 9:15-10:15 PM
-
-NAS THRESHOLDS (Non-Activity Stress):
-- NAS >= 50 or High Stress >= 60 min: System Drain Flag
-- High Stress sedentary > 90 min: Cardiac Alert
-- Sleep debt > 1h: subtract 8 from all NAS thresholds
-
-TODAY'S DATA:
-{json.dumps(metrics, indent=2)}
-
-Generate the evening report in EXACTLY this format:
-
-1. MINI RECAP
-- Today's activity summary, strain score (0-21), steps vs 7,400 floor
-
-2. WEEKLY FIT & TOMORROW'S IMPLICATION
-- How today fits Sunday/Tuesday/Friday framework
-- Tomorrow's session type, duration, HR zone
-
-3. STRESS & NAS ANALYSIS
-- Inactive stress vs baseline (HR adjusted +12 bpm for Metoprolol)
-- System drain flag if triggered
-- Stress alerts if weekly stress climbing
-
-4. SLEEP TIMING
-- Target bedtime/wake based on sleep debt
-- Consistency check vs 9:15-10:15 PM window
-
-5. THE SO WHAT
-- One specific recommendation (NSDR, breathwork, etc.) if NAS elevated
-- One closing question about tomorrow
-
-CONSTRAINTS: No emojis. Data-anchored. Concise."""
-
-          response = requests.post(
-              "https://api.anthropic.com/v1/messages",
-              headers={
-                  "x-api-key": api_key,
-                  "anthropic-version": "2023-06-01",
-                  "content-type": "application/json"
-              },
-              json={
-                  "model": "claude-sonnet-4-6",
-                  "max_tokens": 2000,
-                  "messages": [{"role": "user", "content": prompt}]
-              },
-              timeout=60
-          )
-          response.raise_for_status()
-          report_text = response.json()["content"][0]["text"]
-
-          filename = f"reports/{report_type}-{date.today().isoformat()}.md"
-          import os; os.makedirs("reports", exist_ok=True)
-          with open(filename, "w") as f:
-              f.write(f"# {report_type.capitalize()} Report — {date.today().isoformat()}\n\n")
-              f.write(report_text)
-          print(f"Report written to {filename}")
-          print("\n" + "="*60)
-          print(report_text)
-          PYEOF
-
-      - name: Commit results
+      - name: Commit latest_metrics.json
         run: |
           git config user.name  "fitness-sync-bot"
           git config user.email "bot@fitness-sync"
-          git add latest_metrics.json reports/ 2>/dev/null || git add latest_metrics.json
-          git diff --cached --quiet || git commit -m "chore: $(date -u +%Y-%m-%dT%H:%M:%SZ) [${{ steps.report_type.outputs.type }}]"
+          git add latest_metrics.json
+          git diff --cached --quiet || git commit -m "chore: update metrics $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push
