@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-06-15T22:07:23.336358",
-  "date": "2026-06-15",
+  "generated_at": "2026-06-16T13:19:36.285045",
+  "date": "2026-06-16",
   "oura": {
     "today": {
+      "readiness_score": 87,
+      "readiness_hrv_balance": 88,
+      "readiness_temp_contrib": 94,
+      "sleep_score": 87,
+      "sleep_total_hr": 7.16,
+      "sleep_deep_hr": 1.25,
+      "sleep_rem_hr": 1.77,
+      "sleep_light_hr": 4.14,
+      "sleep_hrv_rmssd": 54.0,
+      "sleep_lowest_hr": 46,
+      "sleep_efficiency": 89.0,
+      "steps": 6775,
+      "active_calories": 457,
+      "spo2_avg": null
+    },
+    "yesterday": {
       "readiness_score": 79,
       "readiness_hrv_balance": 87,
       "readiness_temp_contrib": 88,
       "sleep_score": 70,
-      "sleep_total_hr": 5.33,
-      "sleep_deep_hr": 0.93,
-      "sleep_rem_hr": 1.44,
-      "sleep_light_hr": 2.96,
-      "sleep_hrv_rmssd": 48.0,
-      "sleep_lowest_hr": 48,
-      "sleep_efficiency": 72.0,
-      "steps": 4526,
-      "active_calories": 208,
-      "spo2_avg": null
-    },
-    "yesterday": {
-      "readiness_score": 71,
-      "readiness_hrv_balance": 86,
-      "readiness_temp_contrib": 100,
-      "sleep_score": 72,
       "sleep_total_hr": null,
       "sleep_deep_hr": null,
       "sleep_rem_hr": null,
@@ -37,30 +37,7 @@
   },
   "apple_health": {
     "today": {},
-    "yesterday": {
-      "steps": 1428.6,
-      "rhr": 51.0,
-      "hrv_sdnn": 51.7,
-      "spo2": 96.5,
-      "resp_rate": 13.9,
-      "active_energy": 180.6,
-      "vo2max": null,
-      "weight_lb": null,
-      "body_fat_pct": null,
-      "wrist_temp": null,
-      "workout_avg_hr": 54.5,
-      "workout_max_hr": 55.4,
-      "running_power": null,
-      "gct_ms": null,
-      "stride_m": null,
-      "vert_osc_cm": null,
-      "sleep_total_hr": 9.91,
-      "sleep_deep_hr": 1.63,
-      "sleep_rem_hr": 1.78,
-      "sleep_core_hr": 6.49,
-      "sleep_awake_hr": 2.58,
-      "workout_dist_km": 0.97
-    }
+    "yesterday": {}
   },
   "errors": []
 }
