@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-06-22T22:58:07.438053",
-  "date": "2026-06-22",
+  "generated_at": "2026-06-23T10:49:51.350782",
+  "date": "2026-06-23",
   "oura": {
     "today": {
+      "readiness_score": 87,
+      "readiness_hrv_balance": 87,
+      "readiness_temp_contrib": 98,
+      "sleep_score": 82,
+      "sleep_total_hr": 6.47,
+      "sleep_deep_hr": 1.22,
+      "sleep_rem_hr": 1.52,
+      "sleep_light_hr": 3.74,
+      "sleep_hrv_rmssd": 47.0,
+      "sleep_lowest_hr": 47,
+      "sleep_efficiency": 87.0,
+      "steps": 6095,
+      "active_calories": 235,
+      "spo2_avg": null
+    },
+    "yesterday": {
       "readiness_score": 86,
       "readiness_hrv_balance": 89,
       "readiness_temp_contrib": 100,
       "sleep_score": 86,
-      "sleep_total_hr": 7.1,
-      "sleep_deep_hr": 1.16,
-      "sleep_rem_hr": 1.33,
-      "sleep_light_hr": 4.61,
-      "sleep_hrv_rmssd": 51.0,
-      "sleep_lowest_hr": 45,
-      "sleep_efficiency": 86.0,
-      "steps": 11219,
-      "active_calories": 474,
-      "spo2_avg": null
-    },
-    "yesterday": {
-      "readiness_score": 89,
-      "readiness_hrv_balance": 90,
-      "readiness_temp_contrib": 100,
-      "sleep_score": 84,
       "sleep_total_hr": null,
       "sleep_deep_hr": null,
       "sleep_rem_hr": null,
@@ -37,30 +37,7 @@
   },
   "apple_health": {
     "today": {},
-    "yesterday": {
-      "steps": 13494.8,
-      "rhr": 57.7,
-      "hrv_sdnn": 56.3,
-      "spo2": 97.7,
-      "resp_rate": 13.9,
-      "active_energy": 852.1,
-      "vo2max": 48.0,
-      "weight_lb": 141.1,
-      "body_fat_pct": 19.9,
-      "wrist_temp": null,
-      "workout_avg_hr": 61.8,
-      "workout_max_hr": 62.9,
-      "running_power": 161.1,
-      "gct_ms": null,
-      "stride_m": 0.9,
-      "vert_osc_cm": null,
-      "sleep_total_hr": 11.49,
-      "sleep_deep_hr": 2.13,
-      "sleep_rem_hr": 2.73,
-      "sleep_core_hr": 6.63,
-      "sleep_awake_hr": 1.54,
-      "workout_dist_km": 14.81
-    }
+    "yesterday": {}
   },
   "errors": []
 }
