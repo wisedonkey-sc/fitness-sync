@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T22:40:55.342718",
+  "generated_at": "2026-07-25T23:49:17.558938",
   "date": "2026-07-25",
   "oura": {
     "today": {
@@ -36,30 +36,7 @@
     }
   },
   "apple_health": {
-    "today": {
-      "steps": 13228.4,
-      "rhr": 55.7,
-      "hrv_sdnn": 73.0,
-      "spo2": 96.6,
-      "resp_rate": 13.4,
-      "active_energy": 715.8,
-      "vo2max": 49.0,
-      "weight_lb": null,
-      "body_fat_pct": null,
-      "wrist_temp": null,
-      "workout_avg_hr": 59.0,
-      "workout_max_hr": 60.3,
-      "running_power": 159.7,
-      "gct_ms": null,
-      "stride_m": 0.9,
-      "vert_osc_cm": null,
-      "sleep_total_hr": 7.73,
-      "sleep_deep_hr": 1.02,
-      "sleep_rem_hr": 1.92,
-      "sleep_core_hr": 4.8,
-      "sleep_awake_hr": 0.08,
-      "workout_dist_km": 13.36
-    },
+    "today": {},
     "yesterday": {
       "steps": 8185.6,
       "rhr": 48.5,
