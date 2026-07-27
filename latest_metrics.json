@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-07-26T23:49:03.567512",
-  "date": "2026-07-26",
+  "generated_at": "2026-07-27T01:28:52.708814",
+  "date": "2026-07-27",
   "oura": {
     "today": {
+      "readiness_score": 88,
+      "readiness_hrv_balance": 67,
+      "readiness_temp_contrib": 94,
+      "sleep_score": 91,
+      "sleep_total_hr": 7.5,
+      "sleep_deep_hr": 1.27,
+      "sleep_rem_hr": 2.17,
+      "sleep_light_hr": 4.07,
+      "sleep_hrv_rmssd": 37.0,
+      "sleep_lowest_hr": 47,
+      "sleep_efficiency": 90.0,
+      "steps": 0,
+      "active_calories": 0,
+      "spo2_avg": null
+    },
+    "yesterday": {
       "readiness_score": 79,
       "readiness_hrv_balance": 81,
       "readiness_temp_contrib": 89,
       "sleep_score": 75,
-      "sleep_total_hr": 6.69,
-      "sleep_deep_hr": 0.56,
-      "sleep_rem_hr": 1.02,
-      "sleep_light_hr": 5.11,
-      "sleep_hrv_rmssd": 53.0,
-      "sleep_lowest_hr": 44,
-      "sleep_efficiency": 84.0,
-      "steps": 5381,
-      "active_calories": 233,
-      "spo2_avg": null
-    },
-    "yesterday": {
-      "readiness_score": 84,
-      "readiness_hrv_balance": 76,
-      "readiness_temp_contrib": 96,
-      "sleep_score": 79,
       "sleep_total_hr": null,
       "sleep_deep_hr": null,
       "sleep_rem_hr": null,
@@ -37,30 +37,7 @@
   },
   "apple_health": {
     "today": {},
-    "yesterday": {
-      "steps": 13228.4,
-      "rhr": 55.7,
-      "hrv_sdnn": 73.0,
-      "spo2": 96.6,
-      "resp_rate": 13.4,
-      "active_energy": 715.8,
-      "vo2max": 49.0,
-      "weight_lb": null,
-      "body_fat_pct": null,
-      "wrist_temp": null,
-      "workout_avg_hr": 59.0,
-      "workout_max_hr": 60.3,
-      "running_power": 159.7,
-      "gct_ms": null,
-      "stride_m": 0.9,
-      "vert_osc_cm": null,
-      "sleep_total_hr": 7.73,
-      "sleep_deep_hr": 1.02,
-      "sleep_rem_hr": 1.92,
-      "sleep_core_hr": 4.8,
-      "sleep_awake_hr": 0.08,
-      "workout_dist_km": 13.36
-    }
+    "yesterday": {}
   },
   "errors": []
 }
