@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T15:21:36.402154",
+  "generated_at": "2026-08-20T16:19:06.209762",
   "date": "2026-08-20",
   "oura": {
     "today": {
@@ -14,8 +14,8 @@
       "sleep_hrv_rmssd": 38.0,
       "sleep_lowest_hr": 47,
       "sleep_efficiency": 78.0,
-      "steps": 4591,
-      "active_calories": 184,
+      "steps": 4600,
+      "active_calories": 185,
       "spo2_avg": null
     },
     "yesterday": {
