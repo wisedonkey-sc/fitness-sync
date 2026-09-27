@@ -1,27 +1,27 @@
 {
-  "generated_at": "2026-09-26T23:57:51.748868",
-  "date": "2026-09-26",
+  "generated_at": "2026-09-27T03:08:34.814783",
+  "date": "2026-09-27",
   "oura": {
     "today": {
-      "readiness_score": 80,
+      "readiness_score": 78,
       "readiness_hrv_balance": 81,
       "readiness_temp_contrib": 100,
-      "sleep_score": 80,
-      "sleep_total_hr": 6.79,
-      "sleep_deep_hr": 0.76,
-      "sleep_rem_hr": 1.61,
-      "sleep_light_hr": 4.42,
-      "sleep_hrv_rmssd": 39.0,
-      "sleep_lowest_hr": 48,
-      "sleep_efficiency": 84.0,
-      "steps": 3588,
-      "active_calories": 181,
+      "sleep_score": 74,
+      "sleep_total_hr": 5.42,
+      "sleep_deep_hr": 1.42,
+      "sleep_rem_hr": 1.34,
+      "sleep_light_hr": 2.67,
+      "sleep_hrv_rmssd": 34.0,
+      "sleep_lowest_hr": 50,
+      "sleep_efficiency": 85.0,
+      "steps": 11777,
+      "active_calories": 759,
       "spo2_avg": null
     },
     "yesterday": {
-      "readiness_score": 85,
-      "readiness_hrv_balance": 79,
-      "readiness_temp_contrib": 97,
+      "readiness_score": 80,
+      "readiness_hrv_balance": 81,
+      "readiness_temp_contrib": 100,
       "sleep_score": 80,
       "sleep_total_hr": null,
       "sleep_deep_hr": null,
@@ -36,7 +36,8 @@
     }
   },
   "apple_health": {
-    "today": {
+    "today": {},
+    "yesterday": {
       "steps": 2299.4,
       "rhr": 51.0,
       "hrv_sdnn": 50.7,
@@ -59,8 +60,7 @@
       "sleep_core_hr": 5.36,
       "sleep_awake_hr": 0.12,
       "workout_dist_km": 1.45
-    },
-    "yesterday": {}
+    }
   },
   "errors": []
 }
