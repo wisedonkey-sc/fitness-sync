@@ -1,35 +1,35 @@
 {
-  "generated_at": "2026-10-05T22:57:42.062278",
-  "date": "2026-10-05",
+  "generated_at": "2026-10-06T02:37:57.910207",
+  "date": "2026-10-06",
   "oura": {
     "today": {
+      "readiness_score": 81,
+      "readiness_hrv_balance": 81,
+      "readiness_temp_contrib": 68,
+      "sleep_score": 82,
+      "sleep_total_hr": 7.09,
+      "sleep_deep_hr": 1.12,
+      "sleep_rem_hr": 1.87,
+      "sleep_light_hr": 4.11,
+      "sleep_hrv_rmssd": 37.0,
+      "sleep_lowest_hr": 46,
+      "sleep_efficiency": 62.0,
+      "steps": 758,
+      "active_calories": 36,
+      "spo2_avg": null
+    },
+    "yesterday": {
       "readiness_score": 73,
       "readiness_hrv_balance": 78,
       "readiness_temp_contrib": 99,
       "sleep_score": 87,
-      "sleep_total_hr": 7.43,
-      "sleep_deep_hr": 1.1,
-      "sleep_rem_hr": 1.68,
-      "sleep_light_hr": 4.65,
-      "sleep_hrv_rmssd": 34.0,
-      "sleep_lowest_hr": 49,
-      "sleep_efficiency": 88.0,
-      "steps": 8354,
-      "active_calories": 421,
-      "spo2_avg": null
-    },
-    "yesterday": {
-      "readiness_score": 76,
-      "readiness_hrv_balance": 81,
-      "readiness_temp_contrib": 95,
-      "sleep_score": 78,
-      "sleep_total_hr": 0.01,
+      "sleep_total_hr": null,
       "sleep_deep_hr": null,
       "sleep_rem_hr": null,
-      "sleep_light_hr": 0.01,
+      "sleep_light_hr": null,
       "sleep_hrv_rmssd": null,
       "sleep_lowest_hr": null,
-      "sleep_efficiency": 3.0,
+      "sleep_efficiency": null,
       "steps": null,
       "active_calories": null,
       "spo2_avg": null
@@ -37,30 +37,7 @@
   },
   "apple_health": {
     "today": {},
-    "yesterday": {
-      "steps": 14963.1,
-      "rhr": 56.3,
-      "hrv_sdnn": 42.5,
-      "spo2": 95.8,
-      "resp_rate": 14.7,
-      "active_energy": 883.7,
-      "vo2max": 50.0,
-      "weight_lb": null,
-      "body_fat_pct": null,
-      "wrist_temp": null,
-      "workout_avg_hr": 65.3,
-      "workout_max_hr": 66.5,
-      "running_power": 160.8,
-      "gct_ms": null,
-      "stride_m": 0.9,
-      "vert_osc_cm": null,
-      "sleep_total_hr": 7.29,
-      "sleep_deep_hr": 1.35,
-      "sleep_rem_hr": 1.77,
-      "sleep_core_hr": 4.18,
-      "sleep_awake_hr": 0.05,
-      "workout_dist_km": 16.25
-    }
+    "yesterday": {}
   },
   "errors": []
 }
