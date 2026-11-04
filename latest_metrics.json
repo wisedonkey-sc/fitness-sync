@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-11-03T22:06:05.209132",
-  "date": "2026-11-03",
+  "generated_at": "2026-11-04T02:47:04.667861",
+  "date": "2026-11-04",
   "oura": {
     "today": {
+      "readiness_score": 89,
+      "readiness_hrv_balance": 88,
+      "readiness_temp_contrib": 100,
+      "sleep_score": 87,
+      "sleep_total_hr": 7.11,
+      "sleep_deep_hr": 1.07,
+      "sleep_rem_hr": 1.97,
+      "sleep_light_hr": 4.08,
+      "sleep_hrv_rmssd": 45.0,
+      "sleep_lowest_hr": 46,
+      "sleep_efficiency": 91.0,
+      "steps": 8951,
+      "active_calories": 624,
+      "spo2_avg": null
+    },
+    "yesterday": {
       "readiness_score": 77,
       "readiness_hrv_balance": 89,
       "readiness_temp_contrib": 73,
       "sleep_score": 77,
-      "sleep_total_hr": 6.4,
-      "sleep_deep_hr": 0.89,
-      "sleep_rem_hr": 1.18,
-      "sleep_light_hr": 4.33,
-      "sleep_hrv_rmssd": 46.0,
-      "sleep_lowest_hr": 49,
-      "sleep_efficiency": 86.0,
-      "steps": 8915,
-      "active_calories": 349,
-      "spo2_avg": null
-    },
-    "yesterday": {
-      "readiness_score": 79,
-      "readiness_hrv_balance": 88,
-      "readiness_temp_contrib": 92,
-      "sleep_score": 76,
       "sleep_total_hr": null,
       "sleep_deep_hr": null,
       "sleep_rem_hr": null,
@@ -36,7 +36,8 @@
     }
   },
   "apple_health": {
-    "today": {
+    "today": {},
+    "yesterday": {
       "steps": 2830.9,
       "rhr": 51.2,
       "hrv_sdnn": 51.4,
@@ -59,30 +60,6 @@
       "sleep_core_hr": 3.93,
       "sleep_awake_hr": 0.0,
       "workout_dist_km": 2.57
-    },
-    "yesterday": {
-      "steps": 8451.5,
-      "rhr": 51.5,
-      "hrv_sdnn": 46.1,
-      "spo2": 96.1,
-      "resp_rate": 13.8,
-      "active_energy": 299.7,
-      "vo2max": null,
-      "weight_lb": null,
-      "body_fat_pct": null,
-      "wrist_temp": null,
-      "workout_avg_hr": 57.8,
-      "workout_max_hr": 59.7,
-      "running_power": null,
-      "gct_ms": null,
-      "stride_m": null,
-      "vert_osc_cm": null,
-      "sleep_total_hr": 13.21,
-      "sleep_deep_hr": 2.57,
-      "sleep_rem_hr": 2.58,
-      "sleep_core_hr": 8.07,
-      "sleep_awake_hr": 3.77,
-      "workout_dist_km": 11.59
     }
   },
   "errors": []
