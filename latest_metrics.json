@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-11-07T07:53:24.679819",
+  "generated_at": "2026-11-07T14:26:58.184278",
   "date": "2026-11-07",
   "oura": {
     "today": {
-      "readiness_score": 85,
-      "readiness_hrv_balance": 88,
+      "readiness_score": 87,
+      "readiness_hrv_balance": 91,
       "readiness_temp_contrib": 95,
-      "sleep_score": 84,
+      "sleep_score": 88,
       "sleep_total_hr": 7.07,
       "sleep_deep_hr": 1.32,
       "sleep_rem_hr": 1.48,
@@ -14,8 +14,8 @@
       "sleep_hrv_rmssd": 39.0,
       "sleep_lowest_hr": 46,
       "sleep_efficiency": 81.0,
-      "steps": 1596,
-      "active_calories": 77,
+      "steps": 3551,
+      "active_calories": 160,
       "spo2_avg": null
     },
     "yesterday": {
